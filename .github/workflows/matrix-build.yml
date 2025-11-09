@@ -1,0 +1,40 @@
+name: Multi-Platform Matrix Build with Artifacts
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build for Python ${{ matrix.python-version }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.9', '3.10', '3.11']
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: matrix-194cd66
+        run: echo "Running matrix build for OS=${{ matrix.os }}, Python=${{ matrix.python-version }}"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Generate build artifact
+        run: |
+          echo "This is the build artifact for OS=${{ matrix.os }}, Python=${{ matrix.python-version }}" > output-${{ matrix.os }}-${{ matrix.python-version }}.txt
+          echo "Timestamp: $(date)" >> output-${{ matrix.os }}-${{ matrix.python-version }}.txt
+          echo "Python Version:" >> output-${{ matrix.os }}-${{ matrix.python-version }}.txt
+          python --version >> output-${{ matrix.os }}-${{ matrix.python-version }}.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          nam
